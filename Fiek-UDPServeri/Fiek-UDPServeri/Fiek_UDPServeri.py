@@ -17,30 +17,46 @@ def zanore(fjalia):
     zanoret = ['a', 'e', 'i', 'o', 'u', 'y']
     count = 0
     for x in fjalia.decode('utf-8'):
-        if x in zanoret:
+        if x.lower() in zanoret:
             count+=1
     return 'Teksti i derguar permban ' + str(count) + ' zanore'
 
 def printo(fjalia):
-    return fjalia
+    return (fjalia.decode('utf-8'))
 
 def host(par):
-    # return hostname
-    pass
+    return gethostbyaddr(par[0])[0]
 
 def time(par):
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def faktoriel(par):
-    factorial(int(par))
+    return str(factorial(int(par)))
 
 def keno(par):
-    res = ''
+    numbers = []
     for i in range(20):
-        res += str(randint(1,81)) + ', '
-    return res   
+        numbers.append(str(randint(1,81)))
+    return ", ".join(numbers) 
+#LEJLA
+def bashketingellore(fjalia):
+    bashketingelloret={'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','x','z',}
+    count=0
+    for x in fjalia.decode('utf-8'):
+        if x in bashketingelloret:
+            count+=1
+    return 'Teksti i derguar permbane ' + str(count) + ' bashketingellore'
 
- 
+def reverse(par):
+    par=par.decode('utf-8')
+    fjalia=[]
+    index = len(par)
+    while index:
+        index -= 1                    # index = index - 1
+        fjalia.append(par[index])        
+    return ''.join(fjalia)
+
+
 kerkesat = {
     b'IP': ip,
     b'PORT': port,
@@ -51,21 +67,29 @@ kerkesat = {
     b'KENO': keno,
     b'FAKTORIEL': faktoriel ,
     b'KONVERTO': 1,
+    b'BASHKETINGELLORE' : bashketingellore ,
+    b'REVERSE' : reverse ,
 }
 
 print("Serveri i gatshem per sherbim")
 
 while True:
     data, clientAddress=serverSocket.recvfrom(2048)
-    komanda, parametri = '', 0
-    mesazhi = ''
     if b' ' in data:
-        komanda, parametri = data.split()
-        mesazhi = kerkesat[komanda](parametri)
+        data=data.split()
+        komanda=data[0]
+        parametri=(b' '.join(data[1:]))
+        if komanda==b'FAKTORIEL' and b' ' in parametri:
+            mesazhi= "Shume parametra"
+        elif komanda in kerkesat:
+            mesazhi = kerkesat[komanda](parametri)
+        else:
+            mesazhi = "Kerkese jo valide."
     else:
-        komanda = data
-        mesazhi = kerkesat[komanda](clientAddress)
-    if komanda in kerkesat:
-        serverSocket.sendto(mesazhi.encode('utf-8'), clientAddress)
-   
-   
+        komanda=data
+        if komanda in kerkesat:
+            mesazhi = kerkesat[komanda](clientAddress)
+        else:
+            mesazhi = "Kerkese jo valide."
+    serverSocket.sendto(mesazhi.encode('utf-8'), clientAddress )
+    print("U dergua mesazhi '{}' te klienti {}:{}".format(mesazhi,clientAddress[0],clientAddress[1]))
