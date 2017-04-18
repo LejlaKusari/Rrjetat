@@ -40,10 +40,10 @@ def keno(par):
     return ", ".join(numbers) 
 #LEJLA
 def bashketingellore(fjalia):
-    bashketingelloret={'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','x','z',}
+    bashketingelloret=['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','x','z',]
     count=0
     for x in fjalia.decode('utf-8'):
-        if x in bashketingelloret:
+        if x.lower() in bashketingelloret:
             count+=1
     return 'Teksti i derguar permbane ' + str(count) + ' bashketingellore'
 
